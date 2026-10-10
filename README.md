@@ -8,7 +8,7 @@ A native Windows gallery for the **implemented** `packages/gui-template` 0.1.50 
 
 - Windows and Craft 0.1.50.
 - A local Craft source checkout next to this repository. The path dependencies in [craft.toml](craft.toml) expect `../craft/packages/gui` and `../craft/packages/gui-template`.
-- The `craft` checkout must include `gui-template` 0.1.50. At the time of this README update, those package changes exist in the local Craft checkout and have **not yet been pushed to its GitHub repository**. A fresh clone of the published `craft` repository may therefore need a newer revision before this project can run.
+- The `craft` checkout must include `gui-template` 0.1.50. Craft source revision `f446cc6` or later on [`spidermeaow/craft`](https://github.com/spidermeaow/craft) includes the package. This source push is separate from a GitHub Release or installer download.
 
 From `D:\02-Repository\craft-ui`:
 
