@@ -1,0 +1,22 @@
+test "component registry matches public UiNode API count" {
+    assert components().length == 36
+    assert categories().length == 10
+}
+
+test "planned overlays are not advertised as available" {
+    var overlayCount: Int = 0
+    for item in components() {
+        if item.category == "Overlays" { overlayCount = overlayCount + 1 }
+    }
+    assert overlayCount == 0
+}
+
+test "every registered component constructs a real preview" {
+    let state: State = State(category: "Overview", query: "", hovered: "", demoNav: "demo-nav-a", sidebarPreference: "auto", narrowOpen: false, tab: 0, enabled: true, sample: "", sample2: "Mock data", metric: 128, lastEvent: "Ready", width: 1280)
+    var built: Int = 0
+    for item in components() {
+        let node: UiNode = preview(item, state)
+        built = built + 1
+    }
+    assert built == 36
+}

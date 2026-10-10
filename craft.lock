@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "root": "craft-ui-showcase@0.1.0",
+  "dependencies": {
+    "gui": "gui@0.1.50",
+    "template": "gui-template@0.1.50"
+  },
+  "packages": [
+    {
+      "id": "gui-template@0.1.50",
+      "source": "../craft/packages/gui-template",
+      "checksum": "58cc4f1a560c4f36daa9bea22bef26f9765e73aa50caaca0b95078a4c1f6e4d6"
+    },
+    {
+      "id": "gui@0.1.50",
+      "source": "../craft/packages/gui",
+      "checksum": "0d7aca7f3823be252cdb991c4feb4404a60ad0c31a8b07098bb06fe2b264e2e6"
+    }
+  ]
+}

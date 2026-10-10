@@ -1,0 +1,62 @@
+import gui "gui"
+import template "template"
+
+func sampleCard(id: String, value: String): UiNode {
+    return template.statCard(id, "PRODUCTS", value, "Mock catalog count", "package", "neutral")
+}
+
+func preview(item: Component, state: State): UiNode {
+    let name: String = item.name
+    if name == "appHeader" { return template.appHeader("demo-app-header", "Craft UI", "Enterprise workspace", [template.actionButton("demo-head-action", "Action", "secondary", true)]) }
+    if name == "appHeaderAdaptive" { return template.appHeaderAdaptive("demo-adaptive-header", "Craft UI", "Adapts to width", [], [], [template.actionButton("demo-head-adaptive", "Action", "secondary", true)], [], state.width) }
+    if name == "pageContainer" { return template.pageContainer("demo-page-container", [gui.text("demo-page-text", "Page content with standard padding")]) }
+    if name == "pageContainerResponsive" { return template.pageContainerResponsive("demo-page-responsive", [gui.text("demo-page-responsive-text", "Padding follows viewport width")], state.width) }
+    if name == "contentSection" { return template.contentSection("demo-content-section", "Section title", "A short description of the section.", [template.actionButton("demo-section-action", "Action", "secondary", true)], [gui.text("demo-section-content", "Section content")]) }
+    if name == "breadcrumb" { return template.breadcrumb("demo-breadcrumb", ["Showcase", "Layout", "Detail"]) }
+    if name == "tabs" { return template.tabs("tabs", ["Overview", "Details", "Access"], state.tab) }
+    if name == "toolbar" { return template.toolbar("demo-toolbar", [template.actionButton("demo-toolbar-a", "Save", "primary", true), template.actionButton("demo-toolbar-b", "Cancel", "secondary", true)]) }
+    if name == "splitPanel" { return gui.size(template.splitPanel("demo-split", gui.text("demo-split-left", "Left pane"), gui.text("demo-split-right", "Right pane"), 45), 0, 110, 0, 110, 0) }
+    if name == "formGrid" { return template.formGrid("demo-form-grid", [gui.field("sample", "Sample input", state.sample, "Type here"), gui.field("second", "Second field", state.sample2, "Another value")], template.estimatedContentWidth(state.width, state.sidebarPreference), 2) }
+    if name == "tableViewport" {
+        let rows: UiNode = gui.column("demo-table-rows", [gui.text("row-a", "SKU-001    Widget A    128"), gui.text("row-b", "SKU-002    Widget B     64")])
+        return gui.size(template.tableViewport("demo-table-viewport", rows), 0, 100, 0, 100, 0)
+    }
+    if name == "actionButton" { return gui.column("demo-button-variants", [
+        template.buttonGroup("demo-buttons-first", [template.actionButton("demo-primary", "Primary", "primary", true), template.actionButton("demo-secondary", "Secondary", "secondary", true)]),
+        template.buttonGroup("demo-buttons-second", [template.actionButton("demo-outline", "Outline", "outline", true), template.actionButton("demo-danger", "Danger", "danger", true), template.actionButton("demo-disabled", "Disabled", "primary", false)])
+    ]) }
+    if name == "iconButtonState" { return template.iconButtonState("demo-icon-state", "history", "History", true, state.hovered == "demo-icon-state") }
+    if name == "iconButton" { return template.iconButton("demo-icon", "package", "Products", true) }
+    if name == "buttonGroup" { return template.buttonGroup("demo-button-group", [template.actionButton("demo-group-a", "Save", "primary", true), template.actionButton("demo-group-b", "Cancel", "secondary", true)]) }
+    if name == "splitButton" { return template.splitButton("demo-split-save", "Save", [template.actionButton("demo-split-more", "Save copy", "secondary", true)], true) }
+    if name == "toggleSwitch" { return template.toggleSwitch("toggle-demo", "Notifications", state.enabled, true) }
+    if name == "statCard" { return sampleCard("demo-stat", std.convert.toString(state.metric)) }
+    if name == "metricGrid" { return template.metricGrid("demo-metric-grid", [sampleCard("demo-grid-a", "128"), sampleCard("demo-grid-b", "64")], template.estimatedContentWidth(state.width, state.sidebarPreference)) }
+    if name == "metricGridResponsive" { return template.metricGridResponsive("demo-responsive-grid", [sampleCard("demo-rgrid-a", "128"), sampleCard("demo-rgrid-b", "64")], template.estimatedContentWidth(state.width, state.sidebarPreference), state.width) }
+    if name == "statusBadge" { return gui.spacing(gui.row("demo-badges", [template.statusBadge("demo-badge-success", "READY", "success"), template.statusBadge("demo-badge-warning", "REVIEW", "warning"), template.statusBadge("demo-badge-danger", "ALERT", "danger"), template.statusBadge("demo-badge-neutral", "NEUTRAL", "neutral")]), 0, 8) }
+    if name == "navItemState" { return template.navItemState("demo-nav-a", "Dashboard", "layout-dashboard", state.demoNav, state.hovered == "demo-nav-a") }
+    if name == "navItemIcon" { return template.navItemIcon("demo-nav-b", "Products", "package", state.demoNav) }
+    if name == "navItemCompact" { return template.navItemCompact("demo-nav-compact", "History", "history", "demo-nav-compact", state.hovered == "demo-nav-compact") }
+    if name == "navItem" { return template.navItem("demo-nav-plain", "Plain item", "demo-nav-plain") }
+    if name == "sectionLabel" { return template.sectionLabel("demo-section-label", "Workspace") }
+    if name == "navigationFooter" { return template.navigationFooter("demo-navigation-footer", "Connected", "Craft 0.1.50") }
+    if name == "navigationWithStatus" { return gui.size(template.navigationWithStatus("demo-navigation-full", "Craft UI", "Showcase", [template.navItem("demo-full-item", "Overview", "demo-full-item")], "Connected", "Craft 0.1.50"), 250, 240, 250, 240, 0) }
+    if name == "navigationCompact" { return gui.size(template.navigationCompact("demo-navigation-compact", "Craft UI", [template.navItemCompact("demo-compact-item", "Overview", "layout-dashboard", "demo-compact-item", false)], true), 72, 170, 72, 170, 0) }
+    if name == "navigation" { return gui.size(template.navigation("demo-navigation", "Craft UI", "Workspace", [template.navItem("demo-legacy-item", "Overview", "demo-legacy-item")], "Craft 0.1.50"), 250, 220, 250, 220, 0) }
+    if name == "topBar" { return template.topBar("demo-topbar", "Craft UI", [template.actionButton("demo-topbar-action", "Action", "secondary", true)]) }
+    if name == "pageHeader" { return template.pageHeader("demo-page-header", "SHOWCASE / LAYOUT", "Page title", "A clear description below the title.") }
+    if name == "card" { return template.card("demo-card", "OVERVIEW", "Information card", "A short reusable card description.") }
+    if name == "section" { return template.section("demo-section", "DETAILS", "Section title", "This section contains content.", [gui.text("demo-section-body", "Live section content")]) }
+    if name == "shell" {
+        let nav: UiNode = template.navigation("demo-shell-nav", "Craft UI", "Preview", [template.navItem("demo-shell-item", "Home", "demo-shell-item")], "Runtime")
+        let top: UiNode = template.topBar("demo-shell-top", "Shell preview", [])
+        return gui.size(template.shell("demo-shell", nav, top, gui.panel("demo-shell-content", [gui.text("demo-shell-body", "Main content")]), 800), 0, 240, 0, 240, 1)
+    }
+    if name == "shellAdaptive" {
+        let nav: UiNode = template.navigation("demo-adaptive-nav", "Craft UI", "Preview", [template.navItem("demo-adaptive-item", "Home", "demo-adaptive-item")], "Runtime")
+        let compact: UiNode = template.navigationCompact("demo-adaptive-compact", "Craft UI", [template.navItemCompact("demo-adaptive-compact-item", "Home", "layout-dashboard", "demo-adaptive-compact-item", false)], true)
+        let top: UiNode = template.topBar("demo-adaptive-top", "Adaptive shell", [])
+        return gui.size(template.shellAdaptive("demo-adaptive-shell", nav, compact, top, gui.panel("demo-adaptive-content", [gui.text("demo-adaptive-body", "Main content")]), state.width, "auto", false), 0, 240, 0, 240, 1)
+    }
+    return gui.text("demo-unavailable", "No preview available")
+}

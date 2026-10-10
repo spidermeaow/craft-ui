@@ -1,0 +1,78 @@
+// Inventory of every UiNode-returning public function in gui-template 0.1.50.
+// Theme/token functions are documented separately in REGISTRY.md.
+struct Component {
+    var name: String
+    var category: String
+    var description: String
+    var signature: String
+    var example: String
+}
+
+func component(name: String, category: String, description: String, signature: String, example: String): Component {
+    return Component(name: name, category: category, description: description, signature: signature, example: example)
+}
+
+func categories(): String[] {
+    return ["Overview", "Layout", "Navigation", "Buttons & Actions", "Cards & Dashboard", "Forms & Inputs", "Data Display", "Feedback", "Overlays", "Responsive"]
+}
+
+func categoryId(name: String): String {
+    if name == "Overview" { return "nav-overview" }
+    if name == "Layout" { return "nav-layout" }
+    if name == "Navigation" { return "nav-navigation" }
+    if name == "Buttons & Actions" { return "nav-actions" }
+    if name == "Cards & Dashboard" { return "nav-cards" }
+    if name == "Forms & Inputs" { return "nav-forms" }
+    if name == "Data Display" { return "nav-data" }
+    if name == "Feedback" { return "nav-feedback" }
+    if name == "Overlays" { return "nav-overlays" }
+    return "nav-responsive"
+}
+
+func categoryIcon(name: String): String {
+    if name == "Overview" || name == "Layout" { return "layout-dashboard" }
+    if name == "Navigation" || name == "Responsive" { return "history" }
+    if name == "Buttons & Actions" || name == "Feedback" { return "arrow-up-from-line" }
+    return "package"
+}
+
+func components(): Component[] {
+    return [
+        component("appHeader", "Layout", "Application title, subtitle and actions.", "appHeader(id: String, title: String, subtitle: String, actions: UiNode[]): UiNode", "template.appHeader(\"demo\", \"Craft UI\", \"Workspace\", [])"),
+        component("appHeaderAdaptive", "Responsive", "Header with leading, center and compact action slots.", "appHeaderAdaptive(id: String, title: String, subtitle: String, leading: UiNode[], center: UiNode[], actions: UiNode[], compactActions: UiNode[], width: Int): UiNode", "template.appHeaderAdaptive(\"demo\", \"Craft UI\", \"Workspace\", [], [], [], [], width)"),
+        component("pageContainer", "Layout", "Standard page padding and spacing.", "pageContainer(id: String, children: UiNode[]): UiNode", "template.pageContainer(\"demo\", [gui.text(\"body\", \"Content\")])"),
+        component("pageContainerResponsive", "Responsive", "Page padding adapts to supplied width.", "pageContainerResponsive(id: String, children: UiNode[], width: Int): UiNode", "template.pageContainerResponsive(\"demo\", [gui.text(\"body\", \"Content\")], width)"),
+        component("contentSection", "Layout", "Section heading, description, actions and content.", "contentSection(id: String, title: String, description: String, actions: UiNode[], content: UiNode[]): UiNode", "template.contentSection(\"demo\", \"Section\", \"Details\", [], [gui.text(\"item\", \"Content\")])"),
+        component("breadcrumb", "Navigation", "Displays a path of labels.", "breadcrumb(id: String, parts: String[]): UiNode", "template.breadcrumb(\"demo\", [\"Home\", \"Details\"])"),
+        component("tabs", "Navigation", "Native buttons for a horizontal tab selection.", "tabs(id: String, labels: String[], selected: Int): UiNode", "template.tabs(\"tabs\", [\"Overview\", \"Details\", \"Access\"], selectedTab)"),
+        component("toolbar", "Layout", "Places action nodes in a row.", "toolbar(id: String, actions: UiNode[]): UiNode", "template.toolbar(\"demo\", [template.actionButton(\"save\", \"Save\", \"primary\", true)])"),
+        component("splitPanel", "Layout", "Two-pane native split view.", "splitPanel(id: String, first: UiNode, second: UiNode, percent: Int): UiNode", "template.splitPanel(\"demo\", left, right, 45)"),
+        component("formGrid", "Forms & Inputs", "Adaptive grid for app-provided form fields.", "formGrid(id: String, fields: UiNode[], availableWidth: Int, maxColumns: Int): UiNode", "template.formGrid(\"demo\", [gui.field(\"name\", \"Name\", value, \"Type here\")], width, 2)"),
+        component("tableViewport", "Data Display", "Scroll viewport around an app-provided table.", "tableViewport(id: String, table: UiNode): UiNode", "template.tableViewport(\"demo\", tableNode)"),
+        component("actionButton", "Buttons & Actions", "Styled native button with enabled state.", "actionButton(id: String, label: String, variant: String, enabled: Bool): UiNode", "template.actionButton(\"save\", \"Save\", \"primary\", true)"),
+        component("iconButtonState", "Buttons & Actions", "Canvas icon target with caller-owned hover state.", "iconButtonState(id: String, icon: String, label: String, enabled: Bool, hovered: Bool): UiNode", "template.iconButtonState(\"history\", \"history\", \"History\", true, hovered)"),
+        component("iconButton", "Buttons & Actions", "Compact icon action.", "iconButton(id: String, icon: String, label: String, enabled: Bool): UiNode", "template.iconButton(\"history\", \"history\", \"History\", true)"),
+        component("buttonGroup", "Buttons & Actions", "Horizontal group of app-provided buttons.", "buttonGroup(id: String, buttons: UiNode[]): UiNode", "template.buttonGroup(\"demo\", [template.actionButton(\"one\", \"One\", \"primary\", true)])"),
+        component("splitButton", "Buttons & Actions", "Primary and adjacent secondary actions.", "splitButton(id: String, primaryLabel: String, secondary: UiNode[], enabled: Bool): UiNode", "template.splitButton(\"save\", \"Save\", [template.actionButton(\"more\", \"More\", \"secondary\", true)], true)"),
+        component("toggleSwitch", "Buttons & Actions", "Button labeled On/Off; app owns the boolean.", "toggleSwitch(id: String, label: String, on: Bool, enabled: Bool): UiNode", "template.toggleSwitch(\"toggle-demo\", \"Enabled\", enabled, true)"),
+        component("statCard", "Cards & Dashboard", "Large metric with detail, optional icon and status color.", "statCard(id: String, label: String, value: String, detail: String, icon: String, status: String): UiNode", "template.statCard(\"stock\", \"Products\", \"128\", \"In catalog\", \"package\", \"neutral\")"),
+        component("metricGrid", "Cards & Dashboard", "Reflow metric cards by content width.", "metricGrid(id: String, cards: UiNode[], availableWidth: Int): UiNode", "template.metricGrid(\"metrics\", cards, contentWidth)"),
+        component("metricGridResponsive", "Responsive", "Forces one metric column in narrow windows.", "metricGridResponsive(id: String, cards: UiNode[], availableWidth: Int, viewportWidth: Int): UiNode", "template.metricGridResponsive(\"metrics\", cards, contentWidth, width)"),
+        component("statusBadge", "Data Display", "Colored status label.", "statusBadge(id: String, label: String, state: String): UiNode", "template.statusBadge(\"ready\", \"READY\", \"success\")"),
+        component("navItemState", "Navigation", "Navigation row with icon, selection and hover.", "navItemState(id: String, label: String, icon: String, selected: String, hovered: Bool): UiNode", "template.navItemState(\"home\", \"Home\", \"layout-dashboard\", selectedId, hovered)"),
+        component("navItemIcon", "Navigation", "Navigation row with optional icon.", "navItemIcon(id: String, label: String, icon: String, selected: String): UiNode", "template.navItemIcon(\"home\", \"Home\", \"layout-dashboard\", selectedId)"),
+        component("navItemCompact", "Navigation", "Icon-only navigation row.", "navItemCompact(id: String, label: String, icon: String, selected: String, hovered: Bool): UiNode", "template.navItemCompact(\"home\", \"Home\", \"layout-dashboard\", selectedId, hovered)"),
+        component("navItem", "Navigation", "Navigation row using the original API.", "navItem(id: String, label: String, selected: String): UiNode", "template.navItem(\"home\", \"Home\", selectedId)"),
+        component("sectionLabel", "Navigation", "Uppercase muted navigation label.", "sectionLabel(id: String, label: String): UiNode", "template.sectionLabel(\"group\", \"Workspace\")"),
+        component("navigationFooter", "Navigation", "Connection status and runtime footer.", "navigationFooter(id: String, status: String, runtime: String): UiNode", "template.navigationFooter(\"footer\", \"Connected\", \"Craft 0.1.50\")"),
+        component("navigationWithStatus", "Navigation", "Full sidebar with fixed footer.", "navigationWithStatus(id: String, brand: String, caption: String, items: UiNode[], status: String, runtime: String): UiNode", "template.navigationWithStatus(\"nav\", \"Craft UI\", \"Showcase\", items, \"Ready\", \"Craft 0.1.50\")"),
+        component("navigationCompact", "Responsive", "Collapsed icon sidebar.", "navigationCompact(id: String, brand: String, items: UiNode[], connected: Bool): UiNode", "template.navigationCompact(\"nav\", \"Craft UI\", items, true)"),
+        component("navigation", "Navigation", "Full sidebar using the original API.", "navigation(id: String, brand: String, caption: String, items: UiNode[], footer: String): UiNode", "template.navigation(\"nav\", \"Craft UI\", \"Showcase\", items, \"Craft 0.1.50\")"),
+        component("topBar", "Layout", "Original header API.", "topBar(id: String, title: String, actions: UiNode[]): UiNode", "template.topBar(\"top\", \"Craft UI\", [])"),
+        component("pageHeader", "Layout", "Page category, title and description.", "pageHeader(id: String, category: String, title: String, description: String): UiNode", "template.pageHeader(\"page\", \"SHOWCASE\", \"Overview\", \"Explore components\")"),
+        component("card", "Cards & Dashboard", "General information card.", "card(id: String, label: String, title: String, detail: String): UiNode", "template.card(\"card\", \"OVERVIEW\", \"Ready\", \"Details\")"),
+        component("section", "Layout", "Panel with kicker, title, description and content.", "section(id: String, kicker: String, title: String, description: String, content: UiNode[]): UiNode", "template.section(\"section\", \"DEMO\", \"Details\", \"Description\", [])"),
+        component("shell", "Responsive", "Original sidebar/header/content shell.", "shell(id: String, sidebar: UiNode, topbar: UiNode, content: UiNode, width: Int): UiNode", "template.shell(\"root\", sidebar, header, content, width)"),
+        component("shellAdaptive", "Responsive", "Expanded, collapsed and narrow shell.", "shellAdaptive(id: String, sidebar: UiNode, compactSidebar: UiNode, topbar: UiNode, content: UiNode, width: Int, preference: String, narrowOpen: Bool): UiNode", "template.shellAdaptive(\"root\", sidebar, compact, header, content, width, \"auto\", false)")
+    ]
+}

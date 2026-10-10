@@ -1,0 +1,129 @@
+import gui "gui"
+import template "template"
+
+struct State {
+    var category: String
+    var query: String
+    var hovered: String
+    var demoNav: String
+    var sidebarPreference: String
+    var narrowOpen: Bool
+    var tab: Int
+    var enabled: Bool
+    var sample: String
+    var sample2: String
+    var metric: Int
+    var lastEvent: String
+    var width: Int
+}
+
+func sidebar(state: State, compact: Bool): UiNode {
+    var items: UiNode[] = []
+    for name in categories() {
+        let id: String = categoryId(name)
+        let icon: String = categoryIcon(name)
+        if compact { items.append(template.navItemCompact(id, name, icon, categoryId(state.category), state.hovered == id)) }
+        else { items.append(template.navItemState(id, name, icon, categoryId(state.category), state.hovered == id)) }
+    }
+    if compact { return template.navigationCompact("sidebar", "Craft UI", items, true) }
+    return template.navigationWithStatus("sidebar", "Craft UI Showcase", "Enterprise Light / Native", items, "Components ready", "Craft 0.1.50")
+}
+
+func narrowSidebar(state: State): UiNode {
+    var items: UiNode[] = []
+    for name in categories() {
+        let id: String = categoryId(name)
+        items.append(template.navItemState(id, name, categoryIcon(name), categoryId(state.category), state.hovered == id))
+    }
+    let menu: UiNode = gui.scrollView("narrow-menu-scroll", gui.spacing(gui.column("narrow-menu-items", items), 0, 6))
+    return gui.surface(gui.spacing(gui.panel("narrow-menu-panel", [menu]), 16, 0), template.surfaceColor(), template.dividerColor(), 8)
+}
+
+func header(state: State): UiNode {
+    if state.width < 650 {
+        let title: UiNode = gui.textStyle(gui.text("header-title", "Craft UI Showcase"), 16, 700, template.ink())
+        let menu: UiNode = gui.size(template.actionButton("menu-toggle", "Menu", "secondary", true), 76, 40, 76, 40, 0)
+        let row: UiNode = gui.spacing(gui.row("header-narrow-row", [gui.align(menu, "stretch", "center"), gui.align(title, "stretch", "center")]), 0, 12)
+        return gui.surface(gui.spacing(gui.panel("header-narrow-panel", [row]), 12, 8), template.surfaceColor(), template.dividerColor(), 0)
+    }
+    var leading: UiNode[] = []
+    var actions: UiNode[] = []
+    if state.width >= 900 {
+        actions.append(gui.textStyle(gui.text("component-search-label", "Search"), 12, 600, template.muted()))
+        actions.append(gui.size(gui.inputStyle(gui.accessible(gui.textInput("component-search-input", state.query, "Search components"), "Search components", "textbox"), template.surfaceColor(), template.secondaryButtonBorder(), 8), 220, 36, 220, 36, 0))
+    }
+    if state.width >= 650 { actions.append(template.actionButton("sidebar-toggle", "Toggle sidebar", "secondary", true)) }
+    return template.appHeaderAdaptive("header", "Craft UI Showcase", state.category, leading, [], actions, [], state.width)
+}
+
+func screen(state: State): UiNode {
+    var expanded: UiNode = sidebar(state, false)
+    if state.width < 650 { expanded = narrowSidebar(state) }
+    return template.shellAdaptive("root", expanded, sidebar(state, true), header(state), galleryPage(state), state.width, state.sidebarPreference, state.narrowOpen)
+}
+
+func main() {
+    let window: UiWindow = gui.openWindow("Craft UI Showcase", 1280, 820)
+    defer { gui.closeWindow(window) }
+    var state: State = State(category: "Overview", query: "", hovered: "", demoNav: "demo-nav-a", sidebarPreference: "auto", narrowOpen: false, tab: 0, enabled: true, sample: "", sample2: "Mock data", metric: 128, lastEvent: "No action yet", width: gui.viewportWidth(window))
+    gui.mount(window, screen(state))
+    var running: Bool = true
+    while running {
+        if let event = gui.nextEvent(100) {
+            var redraw: Bool = false
+            if event.kind == "CloseRequested" { running = false }
+            if gui.viewportChanged(event) { state.width = event.width; redraw = true }
+            if event.kind == "TextChanged" {
+                if event.nodeId == "component-search-input" { state.query = event.text; redraw = true }
+                if event.nodeId == "sample-input" { state.sample = event.text; redraw = true }
+                if event.nodeId == "second-input" { state.sample2 = event.text; redraw = true }
+            }
+            if event.kind == "CanvasTargetEntered" && event.nodeId.endsWith("-target") {
+                state.hovered = event.nodeId.substring(0, event.nodeId.length - 7)
+                redraw = true
+            }
+            if event.kind == "CanvasTargetLeft" && event.nodeId.endsWith("-target") { state.hovered = ""; redraw = true }
+            if event.kind == "CanvasPressed" {
+                if event.nodeId == "demo-nav-a" || event.nodeId == "demo-nav-b" {
+                    state.demoNav = event.nodeId
+                    state.lastEvent = "CanvasPressed: " + event.nodeId
+                    redraw = true
+                }
+                for name in categories() {
+                    if event.nodeId == categoryId(name) {
+                        state.category = name
+                        state.narrowOpen = false
+                        state.query = ""
+                        redraw = true
+                    }
+                }
+            }
+            if event.kind == "ButtonPressed" {
+                if event.nodeId == "sidebar-toggle" {
+                    if state.sidebarPreference == "collapsed" { state.sidebarPreference = "expanded" }
+                    else { state.sidebarPreference = "collapsed" }
+                    redraw = true
+                } else if event.nodeId == "menu-toggle" {
+                    state.narrowOpen = !state.narrowOpen
+                    redraw = true
+                } else if event.nodeId == "toggle-demo" {
+                    state.enabled = !state.enabled
+                    state.lastEvent = "ButtonPressed: toggle-demo"
+                    redraw = true
+                } else if event.nodeId == "metric-change" {
+                    state.metric = state.metric + 1
+                    state.lastEvent = "ButtonPressed: metric-change"
+                    redraw = true
+                } else if event.nodeId == "tabs-0" || event.nodeId == "tabs-1" || event.nodeId == "tabs-2" {
+                    if event.nodeId == "tabs-0" { state.tab = 0 }
+                    if event.nodeId == "tabs-1" { state.tab = 1 }
+                    if event.nodeId == "tabs-2" { state.tab = 2 }
+                    state.lastEvent = "ButtonPressed: " + event.nodeId
+                    redraw = true
+                } else { state.lastEvent = "ButtonPressed: " + event.nodeId; redraw = true }
+            }
+            if event.kind == "CanvasTargetPressed" { state.lastEvent = "CanvasTargetPressed: " + event.nodeId; redraw = true }
+            if redraw { gui.update(window, screen(state)) }
+        }
+    }
+}

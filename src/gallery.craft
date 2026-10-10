@@ -1,0 +1,103 @@
+import gui "gui"
+import template "template"
+
+func availability(name: String): String {
+    if name == "splitButton" || name == "toggleSwitch" || name == "tableViewport" || name == "formGrid" || name == "shell" || name == "shellAdaptive" || name == "navigationWithStatus" || name == "navigationCompact" || name == "navItemState" || name == "iconButtonState" { return "LIMITED" }
+    return "AVAILABLE"
+}
+
+func limitations(name: String): String {
+    if name == "splitButton" { return "Adjacent buttons only; no popup menu." }
+    if name == "toggleSwitch" { return "Native button presentation; caller owns the boolean and responds to ButtonPressed." }
+    if name == "tableViewport" { return "Scroll viewport only; gui-template has no dataTable component." }
+    if name == "formGrid" { return "Grid only; use packages/gui for input controls and validation." }
+    if name == "shell" { return "Stacks below 760 logical px; this app uses shellAdaptive." }
+    if name == "shellAdaptive" { return "Caller owns sidebar preference and narrow-open state; narrow sidebar is stacked, not an overlay." }
+    if name == "navigationWithStatus" { return "Status color is fixed to success; caller supplies actual status text." }
+    if name == "navigationCompact" { return "Icon rendering supports five names; no built-in tooltip." }
+    if name == "navItemState" { return "Caller owns hover and selection; no disabled navigation variant." }
+    if name == "iconButtonState" { return "Caller owns hover; Canvas has no separate pressed visual." }
+    if name == "tabs" { return "Caller changes selected index after ButtonPressed." }
+    if name == "statusBadge" { return "Static label; not an interactive control." }
+    return "All arguments are positional; state and events belong to the application."
+}
+
+func variants(name: String): String {
+    if name == "actionButton" { return "primary, secondary, outline, danger; enabled or disabled" }
+    if name == "statusBadge" { return "success, warning, danger, neutral" }
+    if name == "statCard" { return "neutral, success, warning, danger; optional icon by empty string" }
+    if name == "navItemState" || name == "navItemCompact" { return "active, hover, normal" }
+    if name == "shellAdaptive" { return "auto, expanded, collapsed; narrowOpen true or false" }
+    if name == "iconButtonState" { return "enabled, disabled; hovered true or false" }
+    return "One composition; see signature for parameters"
+}
+
+func responsiveNotes(name: String): String {
+    if name == "shellAdaptive" || name == "appHeaderAdaptive" || name == "pageContainerResponsive" || name == "metricGridResponsive" || name == "formGrid" { return "Caller supplies viewport or content width; rebuild on Resized/DpiChanged." }
+    if name == "metricGrid" { return "Columns follow available content width." }
+    if name == "navigationCompact" { return "Designed for a 72 logical px sidebar." }
+    return "Follows parent layout; inspect live preview while resizing."
+}
+
+func galleryCard(item: Component, state: State): UiNode {
+    let id: String = "entry-" + item.name
+    let status: String = availability(item.name)
+    var statusPaint: Int = template.successColor()
+    if status == "LIMITED" { statusPaint = template.warningColor() }
+    var parts: UiNode[] = [
+        gui.textStyle(gui.text(id + "-name", item.name), 20, 700, template.ink()),
+        gui.textWrap(gui.textStyle(gui.text(id + "-description", item.description), 13, 400, template.muted())),
+        gui.textStyle(gui.text(id + "-status", status), 11, 700, statusPaint),
+        gui.textStyle(gui.text(id + "-preview-label", "LIVE PREVIEW"), 11, 700, template.accent()),
+        preview(item, state)
+    ]
+    if item.name == "statCard" { parts.append(template.actionButton("metric-change", "Change mock value", "secondary", true)) }
+    parts.append(gui.textStyle(gui.text(id + "-api-label", "API SIGNATURE"), 11, 700, template.accent()))
+    parts.append(gui.textWrap(gui.textStyle(gui.text(id + "-signature", item.signature), 12, 400, template.ink())))
+    parts.append(gui.textStyle(gui.text(id + "-code-label", "CRAFT EXAMPLE"), 11, 700, template.accent()))
+    parts.append(gui.textWrap(gui.textStyle(gui.text(id + "-example", item.example), 12, 400, template.ink())))
+    parts.append(gui.textWrap(gui.textStyle(gui.text(id + "-variants", "Variants / states: " + variants(item.name)), 11, 400, template.muted())))
+    parts.append(gui.textWrap(gui.textStyle(gui.text(id + "-responsive", "Responsive: " + responsiveNotes(item.name)), 11, 400, template.muted())))
+    parts.append(gui.textWrap(gui.textStyle(gui.text(id + "-limit", "Notes: " + limitations(item.name)), 11, 400, template.muted())))
+    let body: UiNode = gui.spacing(gui.column(id + "-content", parts), 0, 10)
+    return gui.surface(gui.spacing(gui.panel(id + "-panel", [body]), 20, 0), template.surfaceColor(), template.dividerColor(), template.cardRadius())
+}
+
+func overviewPage(state: State): UiNode {
+    let width: Int = template.estimatedContentWidth(state.width, state.sidebarPreference)
+    var blocks: UiNode[] = [
+        template.pageHeader("overview-header", "CRAFT / ENTERPRISE UI", "Component library", "Explore the implemented gui-template APIs. Preview nodes are rendered by Craft's native Windows UI engine."),
+        template.metricGridResponsive("overview-metrics", [
+            template.statCard("overview-components", "COMPONENT APIs", "36", "UiNode-returning public functions", "package", "neutral"),
+            template.statCard("overview-tokens", "DESIGN HELPERS", "25", "24 theme helpers plus estimatedContentWidth", "layout-dashboard", "neutral"),
+            template.statCard("overview-no-deps", "DATA SOURCES", "0", "Mock data only", "history", "success")
+        ], width, state.width),
+        template.section("overview-guidance", "GET STARTED", "Select a category", "Use the sidebar to inspect live previews, exact signatures and copyable Craft examples. Resize the window to inspect adaptive layouts.", [
+            gui.textWrap(gui.textStyle(gui.text("overview-events", "Last event: " + state.lastEvent), 13, 600, template.ink())),
+            gui.textStyle(gui.text("overview-width", "Viewport width: " + std.convert.toString(state.width) + " logical px / " + template.layoutMode(state.width)), 13, 400, template.muted())
+        ])
+    ]
+    return gui.spacing(gui.column("overview-page", blocks), 0, 18)
+}
+
+func galleryPage(state: State): UiNode {
+    if state.category == "Overview" && state.query == "" { return overviewPage(state) }
+    var title: String = state.category
+    if state.query != "" { title = "Search results" }
+    var blocks: UiNode[] = [template.pageHeader("category-header", "CRAFT / UI SHOWCASE", title, "Live components and exact public API signatures from packages/gui-template 0.1.50.")]
+    if state.width < 900 { blocks.append(gui.field("component-search", "Search this category", state.query, "Component name or description")) }
+    blocks.append(gui.textWrap(gui.textStyle(gui.text("event-status", "Last event: " + state.lastEvent), 12, 600, template.muted())))
+    var count: Int = 0
+    for item in components() {
+        if (item.category == state.category && state.query == "") || (state.query != "" && (item.name.lower().contains(state.query.lower()) || item.description.lower().contains(state.query.lower()))) {
+            blocks.append(galleryCard(item, state))
+            count = count + 1
+        }
+    }
+    if count == 0 {
+        var message: String = "No components match this search."
+        if state.query == "" { message = "PLANNED — gui-template 0.1.50 does not expose components in this category yet." }
+        blocks.append(template.section("empty-category", "REGISTRY STATUS", state.category, message, []))
+    }
+    return gui.spacing(gui.column("gallery-page", blocks), 0, 18)
+}

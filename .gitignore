@@ -1,0 +1,6 @@
+/dist/
+/.env
+/.env.*
+/.local/
+*.clixml
+__pycache__/
